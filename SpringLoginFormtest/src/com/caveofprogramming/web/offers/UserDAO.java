@@ -1,0 +1,78 @@
+package com.caveofprogramming.web.offers;
+
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class UserDAO implements IUserDAO {
+	@Autowired
+	  DataSource datasource;
+
+	@Autowired
+	  JdbcTemplate jdbcTemplate;
+	
+	//public void setDataSource(DataSource dataSource) {
+		//this.dataSource = dataSource;
+	//}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.caveofprogramming.web.offers.IUserDAO#isValidUser(com.
+	 * caveofprogramming.web.offers.User)
+	 */
+
+	@Override
+	public boolean isValidUser(User user) {
+try{
+		String SQL = ("SELECT * from login where userId='" + user.getUserId() + "' and password='" + user.getPassword()+ "'");
+	      User user1 =  (User) jdbcTemplate.queryForObject(SQL, new UserMapper());
+	      return true;
+}catch(EmptyResultDataAccessException e)
+{
+	return false; 
+	}
+
+	}
+
+	@Override
+	public boolean addUser(User user) {
+		String InsertQuery = "insert into  users.login(userId,password,email,phone,city) values(?,?,?,?,?)";
+
+		int i=jdbcTemplate.update(InsertQuery,user.getUserId(),user.getPassword(),user.getEmail(),user.getPhone(),user.getCity());
+		if(i==1){
+		return true;
+		}
+		return false;		
+	}
+	
+//    public boolean addProduct(Product product) {
+//		  
+//String InsertQuery = "insert into  sample.product(id,name,description,cost) values(?,?,?,?)";
+//
+//int i=jdbcTemplate.update(InsertQuery,product.getId(),product.getName(),product.getDescription(),product.getPrice());
+//if(i==1){
+//return true;
+//}
+//return false;
+//}
+
+//	@Override
+//	public boolean addUser(User user) {
+//		try{
+//			String SQL1 = ("INSERT into login '" + user.getUserId() + "' and password='" + user.getPassword()+ "'");
+//		      User user1 =  (User) jdbcTemplate.queryForObject(SQL1, new UserMapper());
+//		      return true;
+//	}catch(EmptyResultDataAccessException e)
+//	{
+//		return false;
+//	}
+
+	}
+	
+
+
